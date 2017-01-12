@@ -10,7 +10,7 @@
       </div>
 
       <div class="form-group">
-        <label>Tipo</label>
+        <label>Tipo</label><br>
         <select [ngModel]="supply.type" (ngModelChange)="onChange( $event )" name="type">
           <option [value]="type" *ngFor="let type of types">{{ type }}</option>
         </select>

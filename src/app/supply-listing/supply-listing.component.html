@@ -1,8 +1,11 @@
 <div class="container">
 
-  Listagem
   <div class="row">
-    <!-- <supply *ngFor="let foto of fotos" class="col-md-3"></supply> -->
-    <supply></supply>
+    <supply
+      class="col-md-3"
+      *ngFor="let supply of supplies"
+      [item]="supply">
+    </supply>
   </div>
+
 </div>

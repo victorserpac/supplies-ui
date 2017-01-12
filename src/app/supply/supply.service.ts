@@ -11,22 +11,13 @@ export class SupplyService {
 
   list() {
     return new Promise( ( resolve, reject ) => {
-      let i = true;
 
-      // let lastSupply = Object.getOwnPropertyNames( localStorage )
-      //   .filter( item => item.split( '-' )[ 0 ] == 'supply' )
-      //   .sort( ( a: any, b: any ) =>  a.split( '-' )[ 1 ] - b.split( '-' )[ 1 ] )
-      //   .pop();
-      // Find in localstorage
+      let supplies = Object.getOwnPropertyNames( localStorage )
+        .filter( item => item.split( '-' )[ 0 ] == 'supply' )
+        .sort( ( a: any, b: any ) =>  a.split( '-' )[ 1 ] - b.split( '-' )[ 1 ] )
+        .map( item => JSON.parse( localStorage[ item ] ) );
 
-      setTimeout( () => {
-
-        if ( i ) {
-          resolve( 'Suprimentos listados!' );
-        } else {
-          reject( 'Houve um problema ao listar os suprimentos' );
-        }
-      }, 1000 );
+      setTimeout( () => resolve( supplies ), 1000 );
 
     });
   }

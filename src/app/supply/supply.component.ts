@@ -7,6 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class SupplyComponent {
 
+  @Input() item;
   @Input() name;
   type;
   validate;

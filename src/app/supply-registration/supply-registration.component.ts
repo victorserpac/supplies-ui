@@ -22,10 +22,6 @@ export class SupplyRegistrationComponent {
     this.service = service;
   }
 
-  onChange( newValue ) {
-    this.supply.type = newValue;
-  }
-
   register( event ) {
     event.preventDefault();
 
@@ -37,6 +33,10 @@ export class SupplyRegistrationComponent {
       .catch( msg => {
         console.log( msg );
       });
+  }
+
+  onChange( newValue ) {
+    this.supply.type = newValue;
   }
 
 }
