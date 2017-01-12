@@ -1,39 +1,42 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { SupplyComponent } from '../supply/supply.component';
+import { SupplyService } from '../supply/supply.service';
 
 @Component({
   selector: 'app-supply-registration',
   templateUrl: './supply-registration.component.html',
   styleUrls: ['./supply-registration.component.css']
 })
-export class SupplyRegistrationComponent implements OnInit {
+export class SupplyRegistrationComponent {
 
   supply = new SupplyComponent();
   types = [
     '',
-    'proteína',
-    'carboidrato',
-    'vitamina'
+    'Proteína',
+    'Carboidrato',
+    'Vitamina'
   ];
+  service;
 
-  constructor() {
-    console.log( this.supply );
-  }
-
-  ngOnInit() {
+  constructor( service: SupplyService ) {
+    this.service = service;
   }
 
   onChange( newValue ) {
-    console.log(newValue);
     this.supply.type = newValue;
   }
 
   register( event ) {
-
     event.preventDefault();
 
-    console.log( event );
-    console.log( this.supply );
+    this.service
+      .register( this.supply )
+      .then( foo => {
+        console.log( foo );
+      })
+      .catch( foo => {
+        console.log( foo );
+      });
   }
 
 }
