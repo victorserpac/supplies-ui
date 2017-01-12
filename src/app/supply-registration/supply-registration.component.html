@@ -11,22 +11,23 @@
 
       <div class="form-group">
         <label>Tipo</label><br>
-        <select [ngModel]="supply.type" (ngModelChange)="onChange( $event )" name="type">
+        <select
+          class="form-control"
+          [ngModel]="supply.type"
+          (ngModelChange)="onChange( $event )"
+          name="type">
           <option [value]="type" *ngFor="let type of types">{{ type }}</option>
         </select>
       </div>
 
       <div class="form-group">
         <label>Validade</label><br>
-        <!-- <my-date-picker
-          [options]="myDatePickerOptions"
-          (dateChanged)="onDateChanged($event)"></my-date-picker> -->
         <my-date-picker
           [options]="myDatePickerOptions"
           locale="pt-br"
-          (dateChanged)="onDateChanged($event)"></my-date-picker>
+          (dateChanged)="onDateChanged($event)">
+        </my-date-picker>
 
-        <!-- <material-datepicker></material-datepicker> -->
         <!-- <input name="validate" [(ngModel)]="supply.validate" class="form-control" autocomplete="off"> -->
       </div>
 
