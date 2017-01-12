@@ -5,6 +5,6 @@ import { FooComponent } from './foo.component';
 @NgModule({
   imports: [ CommonModule ],
   declarations: [ FooComponent ],
-  exports: [ FooComponent ],
+  exports: [ FooComponent ]
 })
 export class FooModule { }
