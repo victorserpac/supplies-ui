@@ -8,11 +8,13 @@ import { routing } from './app.routes';
 
 import { AppComponent } from './app.component';
 import { SupplyRegistrationComponent } from './supply-registration/supply-registration.component';
+import { SupplyListingComponent } from './supply-listing/supply-listing.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    SupplyRegistrationComponent
+    SupplyRegistrationComponent,
+    SupplyListingComponent
   ],
   imports: [
     BrowserModule,
