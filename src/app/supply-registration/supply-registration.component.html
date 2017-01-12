@@ -1,1 +1,33 @@
-Cadastro
+<div class="container">
+  <h2 class="text-center">{{ supply.name }}</h2>
+
+  <form (submit)="register( $event )" class="row">
+    <div class="col-md-6 col-md-offset-3">
+
+      <div class="form-group">
+        <label>Nome</label>
+        <input name="name" [(ngModel)]="supply.name" class="form-control" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label>Tipo</label>
+        <select [ngModel]="supply.type" (ngModelChange)="onChange( $event )" name="type">
+          <option [value]="type" *ngFor="let type of types">{{ type }}</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Validade</label>
+        <input name="validate" [(ngModel)]="supply.validate" class="form-control" autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label>Localização</label>
+        <input name="location" [(ngModel)]="supply.location" class="form-control" autocomplete="off">
+      </div>
+
+      <button class="btn btn-primary" type="submit" name="button">Salvar</button>
+      <a [routerLink]="['']" class="btn">Voltar</a>
+    </div>
+  </form>
+</div>
