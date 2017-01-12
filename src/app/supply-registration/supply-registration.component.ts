@@ -12,9 +12,12 @@ export class SupplyRegistrationComponent {
 
   service;
 
+  // Form
   registrationForm: FormGroup;
   submitted = false;
   filledDate = false;
+  message = '';
+  selectedDate = '';
 
   supply = new SupplyComponent();
   types = [
@@ -58,15 +61,18 @@ export class SupplyRegistrationComponent {
       this.service
         .register( this.supply )
         .then( msg => {
-          console.log( msg );
+          this.message = msg;
+          this.supply = new SupplyComponent();
+          this.submitted = false;
+          this.selectedDate = '';
         })
-        .catch( msg => {
-          console.log( msg );
-        });
+        .catch( msg => this.message = msg );
     }
   }
 
   onDateChanged( date ) {
+    this.selectedDate = date.formatted;
+
     if ( date.jsdate ) {
       this.filledDate = true;
       this.supply.validate = date.jsdate;

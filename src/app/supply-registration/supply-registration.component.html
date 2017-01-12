@@ -1,6 +1,7 @@
 <div class="container">
   <h2 class="text-center">{{ supply.name }}</h2>
 
+  <p *ngIf="message.length" class="alert alert-info">{{ message }}</p>
   <form [formGroup]="registrationForm" (submit)="register( $event )" class="row">
     <div class="col-md-6 col-md-offset-3">
 
@@ -36,6 +37,7 @@
       <div class="form-group">
         <label>Validade</label><br>
         <my-date-picker
+          [selDate]="selectedDate"
           [options]="myDatePickerOptions"
           locale="pt-br"
           (dateChanged)="onDateChanged($event)">
