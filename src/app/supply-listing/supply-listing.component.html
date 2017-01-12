@@ -1,11 +1,24 @@
 <div class="container">
 
   <div class="row">
-    <supply
-      class="col-md-3"
-      *ngFor="let supply of supplies"
-      [item]="supply">
-    </supply>
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Tipo</th>
+          <th>Data de Validade</th>
+          <th>Localização</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let supply of supplies">
+          <td>{{ supply.name }}</td>
+          <td>{{ supply.type }}</td>
+          <td>{{ supply.validate }}</td>
+          <td>{{ supply.location }}</td>
+        </tr>
+        <tr>
+      </tbody>
+    </table>
   </div>
-
 </div>
