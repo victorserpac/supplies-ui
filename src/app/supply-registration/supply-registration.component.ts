@@ -3,12 +3,13 @@ import { SupplyComponent } from '../supply/supply.component';
 import { SupplyService } from '../supply/supply.service';
 
 @Component({
-  selector: 'app-supply-registration',
+  selector:    'app-supply-registration',
   templateUrl: './supply-registration.component.html',
-  styleUrls: ['./supply-registration.component.css']
+  styleUrls:   [ './supply-registration.component.css' ]
 })
 export class SupplyRegistrationComponent {
 
+  service;
   supply = new SupplyComponent();
   types = [
     '',
@@ -16,7 +17,6 @@ export class SupplyRegistrationComponent {
     'Carboidrato',
     'Vitamina'
   ];
-  service;
 
   constructor( service: SupplyService ) {
     this.service = service;
@@ -31,11 +31,11 @@ export class SupplyRegistrationComponent {
 
     this.service
       .register( this.supply )
-      .then( foo => {
-        console.log( foo );
+      .then( msg => {
+        console.log( msg );
       })
-      .catch( foo => {
-        console.log( foo );
+      .catch( msg => {
+        console.log( msg );
       });
   }
 
