@@ -1,3 +1,13 @@
-<h1>
-  {{title}}
-</h1>
+<div class="jumbotron">
+  <h1 class="text-center">
+    Suprimentos App
+  </h1>
+</div>
+<nav class="navbar navbar-default">
+    <ul class="nav navbar-nav">
+      <li><a [routerLink]="['/cadastro']">Novo suprimento</a></li>
+      <li><a [routerLink]="['']">Home</a></li>
+    </ul>
+</nav>
+
+<router-outlet></router-outlet>
