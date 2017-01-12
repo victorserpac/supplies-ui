@@ -17,9 +17,26 @@ export class SupplyRegistrationComponent {
     'Carboidrato',
     'Vitamina'
   ];
+  today = new Date();
+  myDatePickerOptions = {
+    showTodayBtn: false,
+    sunHighlight: false,
+    editableMonthAndYear: false,
+    disableUntil: {
+      year: this.today.getFullYear(),
+      month: this.today.getMonth() + 1,
+      day: this.today.getDate() - 1
+    },
+    showClearDateBtn: false,
+    selectionTxtFontSize: "14px",
+    customPlaceholderTxt: "Digite ou selecione uma data de validade"
+  };
 
   constructor( service: SupplyService ) {
     this.service = service;
+  }
+  onDateChanged( event ) {
+    console.log(event);
   }
 
   register( event ) {

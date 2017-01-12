@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { SupplyModule } from './supply/supply.module';
 import { FooModule } from './foo/foo.module';
+import { MyDatePickerModule } from 'mydatepicker';
 
 import { routing } from './app.routes';
 
@@ -18,7 +19,8 @@ import { SupplyListingComponent } from './supply-listing/supply-listing.componen
     HttpModule,
     routing,
     SupplyModule,
-    FooModule
+    FooModule,
+    MyDatePickerModule
   ],
   declarations: [
     AppComponent,
