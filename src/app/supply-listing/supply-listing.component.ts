@@ -1,15 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
+// import { SupplyComponent } from '../supply/supply.component';
 
 @Component({
-  selector: 'app-supply-listing',
+  selector: 'supply-listing',
   templateUrl: './supply-listing.component.html',
   styleUrls: ['./supply-listing.component.css']
 })
-export class SupplyListingComponent implements OnInit {
-
-  constructor() { }
-
-  ngOnInit() {
-  }
-
-}
+export class SupplyListingComponent { }

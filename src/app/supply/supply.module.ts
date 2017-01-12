@@ -4,12 +4,9 @@ import { SupplyComponent } from './supply.component';
 import { SupplyService } from './supply.service';
 
 @NgModule({
-  imports: [
-    CommonModule
-  ],
-  declarations: [
-    SupplyComponent
-  ],
-  providers: [ SupplyService ]
+  imports: [ CommonModule ],
+  declarations: [ SupplyComponent ],
+  providers: [ SupplyService ],
+  // exports: [ SupplyComponent ]
 })
 export class SupplyModule { }

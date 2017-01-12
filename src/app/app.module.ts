@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { SupplyModule } from './supply/supply.module';
+import { FooModule } from './foo/foo.module';
 
 import { routing } from './app.routes';
 
@@ -11,17 +12,18 @@ import { SupplyRegistrationComponent } from './supply-registration/supply-regist
 import { SupplyListingComponent } from './supply-listing/supply-listing.component';
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    SupplyRegistrationComponent,
-    SupplyListingComponent
-  ],
   imports: [
     BrowserModule,
     FormsModule,
     HttpModule,
     routing,
-    SupplyModule
+    SupplyModule,
+    FooModule
+  ],
+  declarations: [
+    AppComponent,
+    SupplyRegistrationComponent,
+    SupplyListingComponent
   ],
   providers: [],
   bootstrap: [ AppComponent ]
