@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { SupplyModule } from './supply/supply.module';
 import { FooModule } from './foo/foo.module';
@@ -16,6 +16,7 @@ import { SupplyListingComponent } from './supply-listing/supply-listing.componen
   imports: [
     BrowserModule,
     FormsModule,
+    ReactiveFormsModule,
     HttpModule,
     routing,
     SupplyModule,

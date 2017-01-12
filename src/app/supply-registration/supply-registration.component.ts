@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SupplyComponent } from '../supply/supply.component';
 import { SupplyService } from '../supply/supply.service';
 
@@ -10,6 +11,11 @@ import { SupplyService } from '../supply/supply.service';
 export class SupplyRegistrationComponent {
 
   service;
+
+  registrationForm: FormGroup;
+  submitted = false;
+  filledDate = false;
+
   supply = new SupplyComponent();
   types = [
     '',
@@ -34,29 +40,39 @@ export class SupplyRegistrationComponent {
     customPlaceholderTxt: "Digite ou selecione uma data de validade"
   };
 
-  constructor( service: SupplyService ) {
+  constructor( service: SupplyService, fb: FormBuilder ) {
     this.service = service;
+
+    this.registrationForm = fb.group({
+      name: [ '', Validators.required ],
+      type: [ '', Validators.required ],
+      location: [ '' ]
+    });
   }
 
   register( event ) {
+    this.submitted = true;
     event.preventDefault();
 
-    this.service
-      .register( this.supply )
-      .then( msg => {
-        console.log( msg );
-      })
-      .catch( msg => {
-        console.log( msg );
-      });
-  }
-
-  onChange( newValue ) {
-    this.supply.type = newValue;
+    if ( this.registrationForm.valid && this.filledDate ) {
+      this.service
+        .register( this.supply )
+        .then( msg => {
+          console.log( msg );
+        })
+        .catch( msg => {
+          console.log( msg );
+        });
+    }
   }
 
   onDateChanged( date ) {
-    this.supply.validate = date.jsdate;
+    if ( date.jsdate ) {
+      this.filledDate = true;
+      this.supply.validate = date.jsdate;
+    } else {
+      this.filledDate = false;
+    }
   }
 
 }
