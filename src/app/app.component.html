@@ -3,11 +3,18 @@
     Suprimentos App
   </h1>
 </div>
+
 <nav class="navbar navbar-default">
-    <ul class="nav navbar-nav">
-      <li><a [routerLink]="['/cadastro']">Novo suprimento</a></li>
-      <li><a [routerLink]="['']">Home</a></li>
-    </ul>
+  <div class="container-fluid">
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a [routerLink]="['']">Home</a></li>
+      </ul>
+      <div class="navbar-form navbar-right">
+        <a class="btn btn-primary" [routerLink]="['/cadastro']">Novo suprimento</a>
+      </div>
+    </div>
+  </div>
 </nav>
 
 <router-outlet></router-outlet>
