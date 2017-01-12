@@ -17,6 +17,8 @@ export class SupplyRegistrationComponent {
     'Carboidrato',
     'Vitamina'
   ];
+
+  // Datepicker config
   today = new Date();
   myDatePickerOptions = {
     showTodayBtn: false,
@@ -35,9 +37,6 @@ export class SupplyRegistrationComponent {
   constructor( service: SupplyService ) {
     this.service = service;
   }
-  onDateChanged( event ) {
-    console.log(event);
-  }
 
   register( event ) {
     event.preventDefault();
@@ -54,6 +53,10 @@ export class SupplyRegistrationComponent {
 
   onChange( newValue ) {
     this.supply.type = newValue;
+  }
+
+  onDateChanged( date ) {
+    this.supply.validate = date.jsdate;
   }
 
 }
