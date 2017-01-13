@@ -52,7 +52,7 @@ export class SupplyRegistrationComponent implements OnInit {
   filledDate = false;
   message = '';
   selectedDate = '';
-  location;
+  location = null;
 
 
   constructor(
@@ -98,6 +98,7 @@ export class SupplyRegistrationComponent implements OnInit {
           }
 
           //set latitude, longitude and zoom
+          this.location = place.formatted_address;
           this.latitude = place.geometry.location.lat();
           this.longitude = place.geometry.location.lng();
           this.zoom = 12;
@@ -110,7 +111,13 @@ export class SupplyRegistrationComponent implements OnInit {
     this.submitted = true;
     event.preventDefault();
 
-    this.supply.location = `${ this.latitude },${ this.longitude }`;
+    this.supply.location = {
+      latLng: `${ this.latitude },${ this.longitude }`,
+      lat: this.latitude,
+      lng: this.longitude,
+      formatted_address: this.location
+    };
+    console.log( this.location );
 
     if ( this.registrationForm.valid && this.filledDate ) {
       this.service
