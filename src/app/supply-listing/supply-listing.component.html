@@ -5,7 +5,7 @@
 
   <div class="row">
 
-    <sebm-google-map [latitude]="lat" [longitude]="lng">
+    <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
       <sebm-google-map-marker *ngFor="let marker of markers" [latitude]="marker.lat" [longitude]="marker.lng">
        <sebm-google-map-info-window [disableAutoPan]="true">
          {{ marker.info }}
