@@ -52,7 +52,11 @@
 
       <div class="form-group">
         <label>Localização</label>
-        <input formControlName="location" name="location" [(ngModel)]="supply.location" class="form-control" autocomplete="off">
+        <input
+          class="form-control"
+          [(ngModel)]="supply.location"
+          [typeahead]="states"
+          formControlName="location">
       </div>
 
       <button class="btn btn-primary" type="submit" name="button">Salvar</button>

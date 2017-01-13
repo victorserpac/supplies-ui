@@ -1,7 +1,11 @@
 import { Component } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SupplyComponent } from '../supply/supply.component';
 import { SupplyService } from '../supply/supply.service';
+
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/observable/of';
+import { TypeaheadMatch } from 'ng2-bootstrap';
 
 @Component({
   selector:    'app-supply-registration',
@@ -12,13 +16,14 @@ export class SupplyRegistrationComponent {
 
   service;
 
-  // Form
+  // Form Validation
   registrationForm: FormGroup;
   submitted = false;
   filledDate = false;
   message = '';
   selectedDate = '';
 
+  // Supply stuf
   supply = new SupplyComponent();
   types = [
     '',
@@ -42,6 +47,20 @@ export class SupplyRegistrationComponent {
     selectionTxtFontSize: "14px",
     customPlaceholderTxt: "Digite ou selecione uma data de validade"
   };
+
+  public states:string[] = ['Alabama', 'Alaska', 'Arizona', 'Arkansas',
+    'California', 'Colorado',
+    'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
+    'Illinois', 'Indiana', 'Iowa',
+    'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts',
+    'Michigan', 'Minnesota',
+    'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
+    'New Jersey', 'New Mexico',
+    'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon',
+    'Pennsylvania', 'Rhode Island',
+    'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
+    'Virginia', 'Washington',
+    'West Virginia', 'Wisconsin', 'Wyoming'];
 
   constructor( service: SupplyService, fb: FormBuilder ) {
     this.service = service;

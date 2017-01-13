@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { SupplyModule } from './supply/supply.module';
 import { FooModule } from './foo/foo.module';
 import { MyDatePickerModule } from 'mydatepicker';
+import { TypeaheadModule } from 'ng2-bootstrap/typeahead';
 
 import { routing } from './app.routes';
 
@@ -21,7 +22,8 @@ import { SupplyListingComponent } from './supply-listing/supply-listing.componen
     routing,
     SupplyModule,
     FooModule,
-    MyDatePickerModule
+    MyDatePickerModule,
+    TypeaheadModule.forRoot()
   ],
   declarations: [
     AppComponent,
