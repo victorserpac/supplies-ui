@@ -1,18 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SupplyComponent } from '../supply/supply.component';
 import { SupplyService } from '../supply/supply.service';
-
-import { Observable } from 'rxjs/Observable';
-import 'rxjs/add/observable/of';
-import { TypeaheadMatch } from 'ng2-bootstrap';
+import { MapsAPILoader } from 'angular2-google-maps/core';
 
 @Component({
   selector:    'app-supply-registration',
   templateUrl: './supply-registration.component.html',
   styleUrls:   [ './supply-registration.component.css' ]
 })
-export class SupplyRegistrationComponent {
+export class SupplyRegistrationComponent implements OnInit {
 
   service;
 
@@ -22,8 +19,9 @@ export class SupplyRegistrationComponent {
   filledDate = false;
   message = '';
   selectedDate = '';
+  location;
 
-  // Supply stuf
+  // Supply stuff
   supply = new SupplyComponent();
   types = [
     '',
@@ -48,21 +46,12 @@ export class SupplyRegistrationComponent {
     customPlaceholderTxt: "Digite ou selecione uma data de validade"
   };
 
-  public states:string[] = ['Alabama', 'Alaska', 'Arizona', 'Arkansas',
-    'California', 'Colorado',
-    'Connecticut', 'Delaware', 'Florida', 'Georgia', 'Hawaii', 'Idaho',
-    'Illinois', 'Indiana', 'Iowa',
-    'Kansas', 'Kentucky', 'Louisiana', 'Maine', 'Maryland', 'Massachusetts',
-    'Michigan', 'Minnesota',
-    'Mississippi', 'Missouri', 'Montana', 'Nebraska', 'Nevada', 'New Hampshire',
-    'New Jersey', 'New Mexico',
-    'New York', 'North Dakota', 'North Carolina', 'Ohio', 'Oklahoma', 'Oregon',
-    'Pennsylvania', 'Rhode Island',
-    'South Carolina', 'South Dakota', 'Tennessee', 'Texas', 'Utah', 'Vermont',
-    'Virginia', 'Washington',
-    'West Virginia', 'Wisconsin', 'Wyoming'];
-
-  constructor( service: SupplyService, fb: FormBuilder ) {
+  constructor(
+    service: SupplyService,
+    fb: FormBuilder,
+    private mapsAPILoader: MapsAPILoader,
+    private ngZone: NgZone
+  ) {
     this.service = service;
 
     this.registrationForm = fb.group({
@@ -97,6 +86,71 @@ export class SupplyRegistrationComponent {
       this.supply.validate = date.jsdate;
     } else {
       this.filledDate = false;
+    }
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+  public latitude: number;
+  public longitude: number;
+  public searchControl: FormControl;
+  public zoom: number;
+
+  @ViewChild("search")
+  public searchElementRef: ElementRef;
+
+  ngOnInit() {
+    //set google maps defaults
+    this.zoom = 4;
+    this.latitude = 39.8282;
+    this.longitude = -98.5795;
+
+    //create search FormControl
+    this.searchControl = new FormControl();
+
+    //set current position
+    this.setCurrentPosition();
+
+    //load Places Autocomplete
+    this.mapsAPILoader.load().then(() => {
+      let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
+        types: ["address"]
+      });
+      autocomplete.addListener("place_changed", () => {
+        this.ngZone.run(() => {
+          //get the place result
+          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+
+          //verify result
+          if (place.geometry === undefined || place.geometry === null) {
+            return;
+          }
+
+          //set latitude, longitude and zoom
+          this.latitude = place.geometry.location.lat();
+          this.longitude = place.geometry.location.lng();
+          this.zoom = 12;
+        });
+      });
+    });
+  }
+
+  private setCurrentPosition() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        this.latitude = position.coords.latitude;
+        this.longitude = position.coords.longitude;
+        this.zoom = 12;
+      });
     }
   }
 
