@@ -13,14 +13,6 @@ export class SupplyRegistrationComponent implements OnInit {
 
   service;
 
-  // Form Validation
-  registrationForm: FormGroup;
-  submitted = false;
-  filledDate = false;
-  message = '';
-  selectedDate = '';
-  location;
-
   // Supply stuff
   supply = new SupplyComponent();
   types = [
@@ -46,6 +38,23 @@ export class SupplyRegistrationComponent implements OnInit {
     customPlaceholderTxt: "Digite ou selecione uma data de validade"
   };
 
+  // Map implementation
+  public latitude: number;
+  public longitude: number;
+  public searchControl: FormControl;
+  public zoom: number;
+  @ViewChild("search")
+  public searchElementRef: ElementRef;
+
+  // Form Validation
+  registrationForm: FormGroup;
+  submitted = false;
+  filledDate = false;
+  message = '';
+  selectedDate = '';
+  location;
+
+
   constructor(
     service: SupplyService,
     fb: FormBuilder,
@@ -61,58 +70,11 @@ export class SupplyRegistrationComponent implements OnInit {
     });
   }
 
-  register( event ) {
-    this.submitted = true;
-    event.preventDefault();
-
-    if ( this.registrationForm.valid && this.filledDate ) {
-      this.service
-        .register( this.supply )
-        .then( msg => {
-          this.message = msg;
-          this.supply = new SupplyComponent();
-          this.submitted = false;
-          this.selectedDate = '';
-        })
-        .catch( msg => this.message = msg );
-    }
-  }
-
-  onDateChanged( date ) {
-    this.selectedDate = date.formatted;
-
-    if ( date.jsdate ) {
-      this.filledDate = true;
-      this.supply.validate = date.jsdate;
-    } else {
-      this.filledDate = false;
-    }
-  }
-
-
-
-
-
-
-
-
-
-
-
-
-  public latitude: number;
-  public longitude: number;
-  public searchControl: FormControl;
-  public zoom: number;
-
-  @ViewChild("search")
-  public searchElementRef: ElementRef;
-
   ngOnInit() {
     //set google maps defaults
     this.zoom = 4;
-    this.latitude = 39.8282;
-    this.longitude = -98.5795;
+    this.latitude = -27.1136184;
+    this.longitude = -50.8356141;
 
     //create search FormControl
     this.searchControl = new FormControl();
@@ -144,12 +106,42 @@ export class SupplyRegistrationComponent implements OnInit {
     });
   }
 
+  register( event ) {
+    this.submitted = true;
+    event.preventDefault();
+
+    this.supply.location = `${ this.latitude },${ this.longitude }`;
+
+    if ( this.registrationForm.valid && this.filledDate ) {
+      this.service
+        .register( this.supply )
+        .then( msg => {
+          this.message = msg;
+          this.supply = new SupplyComponent();
+          this.submitted = false;
+          this.selectedDate = '';
+        })
+        .catch( msg => this.message = msg );
+    }
+  }
+
+  onDateChanged( date ) {
+    this.selectedDate = date.formatted;
+
+    if ( date.jsdate ) {
+      this.filledDate = true;
+      this.supply.validate = date.jsdate;
+    } else {
+      this.filledDate = false;
+    }
+  }
+
   private setCurrentPosition() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition((position) => {
         this.latitude = position.coords.latitude;
         this.longitude = position.coords.longitude;
-        this.zoom = 12;
+        this.zoom = 14;
       });
     }
   }
