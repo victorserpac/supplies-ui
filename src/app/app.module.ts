@@ -3,7 +3,6 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpModule } from '@angular/http';
 import { SupplyModule } from './supply/supply.module';
-import { FooModule } from './foo/foo.module';
 import { MyDatePickerModule } from 'mydatepicker';
 import { AgmCoreModule } from "angular2-google-maps/core";
 
@@ -21,7 +20,6 @@ import { SupplyListingComponent } from './supply-listing/supply-listing.componen
     HttpModule,
     routing,
     SupplyModule,
-    FooModule,
     MyDatePickerModule,
     AgmCoreModule.forRoot({
       apiKey: "AIzaSyCRzRSIDKNJOEEXJhOkSh4tUNcoTk8NChA",
