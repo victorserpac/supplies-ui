@@ -66,9 +66,20 @@
           class="form-control"
           placeholder="Ex.: Rua dos Marcianos, 123">
 
+        <div *ngIf="!this.searchControl.value && submitted">
+          <span class="form-control alert-danger">
+            Localização do suprimento é obrigatório
+          </span>
+        </div>
+        <div *ngIf="!this.location && submitted && this.searchControl.value">
+          <span class="form-control alert-danger">
+            Localização inválida
+          </span>
+        </div>
         <sebm-google-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
           <sebm-google-map-marker [latitude]="latitude" [longitude]="longitude"></sebm-google-map-marker>
         </sebm-google-map>
+
       </div>
 
       <button class="btn btn-primary" type="submit" name="button">Salvar</button>

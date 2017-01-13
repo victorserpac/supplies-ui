@@ -66,8 +66,7 @@ export class SupplyRegistrationComponent implements OnInit {
 
     this.registrationForm = fb.group({
       name: [ '', Validators.required ],
-      type: [ '', Validators.required ],
-      location: [ '' ]
+      type: [ '', Validators.required ]
     });
   }
 
@@ -109,11 +108,18 @@ export class SupplyRegistrationComponent implements OnInit {
   }
 
   register( event ) {
-    console.log(event);
-
 
     this.submitted = true;
     event.preventDefault();
+
+    if (
+      !this.registrationForm.valid ||
+      !this.filledDate ||
+      !this.searchControl.value ||
+      !this.location
+    ) {
+      return false;
+    }
 
     this.supply.location = {
       latLng: `${ this.latitude },${ this.longitude }`,
@@ -121,18 +127,20 @@ export class SupplyRegistrationComponent implements OnInit {
       lng: this.longitude,
       formatted_address: this.location
     };
-
-    if ( this.registrationForm.valid && this.filledDate ) {
-      this.service
-        .register( this.supply )
-        .then( msg => {
-          this.message = msg;
-          this.supply = new SupplyComponent();
-          this.submitted = false;
-          this.selectedDate = '';
-        })
-        .catch( msg => this.message = msg );
-    }
+    this.service
+      .register( this.supply )
+      .then( msg => {
+        this.message = msg;
+        this.supply = new SupplyComponent();
+        this.submitted = false;
+        this.selectedDate = '';
+        this.location = null;
+        this.latitude = -27.1136184;
+        this.longitude = -50.8356141;
+        this.searchControl = new FormControl();
+        this.zoom = 4;
+      })
+      .catch( msg => this.message = msg );
   }
 
   onDateChanged( date ) {
