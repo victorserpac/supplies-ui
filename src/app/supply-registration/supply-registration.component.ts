@@ -117,7 +117,6 @@ export class SupplyRegistrationComponent implements OnInit {
       lng: this.longitude,
       formatted_address: this.location
     };
-    console.log( this.location );
 
     if ( this.registrationForm.valid && this.filledDate ) {
       this.service

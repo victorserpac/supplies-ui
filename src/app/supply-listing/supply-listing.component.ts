@@ -25,8 +25,8 @@ export class SupplyListingComponent {
         lng: this.lng,
       })
       .then( supplies => this.markers = supplies.map( item => ({
-        lat: +item.location.split( ',' )[ 0 ] || null,
-        lng: +item.location.split( ',' )[ 1 ] || null,
+        lat: +item.location.lat,
+        lng: +item.location.lng,
         info: item.name
       })))
       .catch( msg => console.log( msg ) )
