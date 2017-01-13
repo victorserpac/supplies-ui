@@ -53,6 +53,7 @@ export class SupplyRegistrationComponent implements OnInit {
   message = '';
   selectedDate = '';
   location = null;
+  submit = false;
 
 
   constructor(
@@ -108,6 +109,9 @@ export class SupplyRegistrationComponent implements OnInit {
   }
 
   register( event ) {
+    console.log(event);
+
+
     this.submitted = true;
     event.preventDefault();
 
@@ -150,6 +154,10 @@ export class SupplyRegistrationComponent implements OnInit {
         this.zoom = 14;
       });
     }
+  }
+
+  onEnter( event ) {
+    return false;
   }
 
 }

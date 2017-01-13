@@ -2,7 +2,10 @@
   <h2 class="text-center">{{ supply.name }}</h2>
 
   <p *ngIf="message.length" class="alert alert-info">{{ message }}</p>
-  <form [formGroup]="registrationForm" (submit)="register( $event )" class="row">
+  <form
+    [formGroup]="registrationForm"
+    (submit)="register( $event )"
+    class="row">
     <div class="col-md-6 col-md-offset-3">
 
       <div class="form-group">
@@ -52,7 +55,17 @@
 
       <div class="form-group">
         <label>Localização</label>
-        <input placeholder="search for location" autocorrect="off" autocapitalize="off" spellcheck="off" type="text" class="form-control" #search [formControl]="searchControl">
+        <input
+          #search
+          [formControl]="searchControl"
+          autocorrect="off"
+          autocapitalize="off"
+          spellcheck="off"
+          type="text"
+          (keydown.enter)="onEnter( $event )"
+          class="form-control"
+          placeholder="Ex.: Rua dos Marcianos, 123">
+
         <sebm-google-map [latitude]="latitude" [longitude]="longitude" [scrollwheel]="false" [zoom]="zoom">
           <sebm-google-map-marker [latitude]="latitude" [longitude]="longitude"></sebm-google-map-marker>
         </sebm-google-map>
