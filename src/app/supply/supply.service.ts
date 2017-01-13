@@ -26,8 +26,8 @@ export class SupplyService {
           return supply;
         })
         .sort( ( a: any, b: any ) => {
-          let distanceA = this.getDistanceFromLatLonInKm( latLng.lat, latLng.lng, a.location.split( ',' )[ 0 ], a.location.split( ',' )[ 1 ] );
-          let distanceB = this.getDistanceFromLatLonInKm( latLng.lat, latLng.lng, b.location.split( ',' )[ 0 ], b.location.split( ',' )[ 1 ] );
+          let distanceA = this.getDistanceFromLatLonInKm( latLng.lat, latLng.lng, a.location.lat, a.location.lng );
+          let distanceB = this.getDistanceFromLatLonInKm( latLng.lat, latLng.lng, b.location.lat, b.location.lng );
 
           return distanceA - distanceB;
         });

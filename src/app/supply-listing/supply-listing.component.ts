@@ -12,9 +12,9 @@ export class SupplyListingComponent {
   service;
   markers;
 
-  lat: number = -27.1136184;
-  lng: number = -50.8356141;
-  zoom = 4;
+  lat: number = 0;
+  lng: number = 0;
+  zoom = 2;
 
   constructor( service: SupplyService ) {
     this.service = service;
@@ -49,7 +49,7 @@ export class SupplyListingComponent {
         navigator.geolocation.getCurrentPosition( ( position ) => {
           this.lat = position.coords.latitude;
           this.lng = position.coords.longitude;
-          this.zoom = 8;
+          this.zoom = 5;
           resolve();
         });
       }
