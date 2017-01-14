@@ -12,11 +12,20 @@ import { MapsAPILoader } from 'angular2-google-maps/core';
 })
 export class SupplyRegistrationComponent implements OnInit {
 
-  geolocationService;
-  service;
+  message = '';
 
-  // Supply stuff
-  supply = new SupplyComponent();
+  // Services
+  geolocationService;
+  supplyService;
+
+  // Form Validation
+  registrationForm: FormGroup;
+  submitted;
+  filledDate;
+  location;
+
+  // Defaults
+  supply;
   types = [
     '',
     'Proteína',
@@ -24,135 +33,97 @@ export class SupplyRegistrationComponent implements OnInit {
     'Vitamina'
   ];
 
-  // Datepicker config
-  today = new Date();
-  myDatePickerOptions = {
-    showTodayBtn: false,
-    sunHighlight: false,
-    editableMonthAndYear: false,
-    disableUntil: {
-      year: this.today.getFullYear(),
-      month: this.today.getMonth() + 1,
-      day: this.today.getDate() - 1
-    },
-    showClearDateBtn: false,
-    selectionTxtFontSize: "14px",
-    customPlaceholderTxt: "Digite ou selecione uma data de validade"
-  };
-
   // Map implementation
-  public latitude: number;
-  public longitude: number;
-  public searchControl: FormControl;
-  public zoom: number;
-  @ViewChild("search")
-  public searchElementRef: ElementRef;
+  searchControl: FormControl;
+  lat;
+  lng;
+  zoom;
+  @ViewChild( "search" )
+  searchElementRef: ElementRef;
 
-  // Form Validation
-  registrationForm: FormGroup;
-  submitted = false;
-  filledDate = false;
-  message = '';
-  selectedDate = '';
-  location = null;
-  submit = false;
+  // Datepicker
+  selectedDate;
+  myDatePickerOptions = {}
 
 
   constructor(
-    service: SupplyService,
+    supplyService: SupplyService,
     geolocationService: GeolocationService,
     fb: FormBuilder,
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone
   ) {
+    // Get services
     this.geolocationService = geolocationService;
-    this.service = service;
+    this.supplyService = supplyService;
 
+    // Form inputs validation
     this.registrationForm = fb.group({
       name: [ '', Validators.required ],
       type: [ '', Validators.required ]
     });
+
+    this.setDefaults();
+
+    // Set datepicker configs
+    let today = new Date();
+    this.myDatePickerOptions = {
+      showTodayBtn: false,
+      sunHighlight: false,
+      editableMonthAndYear: false,
+      disableUntil: {
+        year: today.getFullYear(),
+        month: today.getMonth() + 1,
+        day: today.getDate() - 1
+      },
+      showClearDateBtn: false,
+      selectionTxtFontSize: "14px",
+      customPlaceholderTxt: "Digite ou selecione uma data de validade"
+    };
   }
 
+  // On component init
   ngOnInit() {
-    //set google maps defaults
-    this.zoom = 4;
-    this.latitude = -27.1136184;
-    this.longitude = -50.8356141;
 
-    //create search FormControl
-    this.searchControl = new FormControl();
-
-    //set current position
+    // Set current position
     this.geolocationService
       .getCurrentPosition()
       .then( latLng => {
-        this.latitude  = latLng.lat;
-        this.longitude = latLng.lng;
-        this.zoom      = 14;
+        this.lat  = latLng.lat;
+        this.lng  = latLng.lng;
+        this.zoom = 14;
       });
 
-    //load Places Autocomplete
-    this.mapsAPILoader.load().then(() => {
-      let autocomplete = new google.maps.places.Autocomplete(this.searchElementRef.nativeElement, {
-        types: ["address"]
-      });
-      autocomplete.addListener("place_changed", () => {
-        this.ngZone.run(() => {
-          //get the place result
-          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
-
-          //verify result
-          if (place.geometry === undefined || place.geometry === null) {
-            return;
-          }
-
-          //set latitude, longitude and zoom
-          this.location = place.formatted_address;
-          this.latitude = place.geometry.location.lat();
-          this.longitude = place.geometry.location.lng();
-          this.zoom = 12;
-        });
-      });
-    });
+    this.loadPlacesAutocomplete();
   }
 
+  // Register event bind
   register( event ) {
-
     this.submitted = true;
     event.preventDefault();
 
-    if (
-      !this.registrationForm.valid ||
-      !this.filledDate ||
-      !this.searchControl.value ||
-      !this.location
-    ) {
+    // Check all validations
+    if ( !this.registrationForm.valid || !this.filledDate || !this.searchControl.value || !this.location ) {
       return false;
     }
 
     this.supply.location = {
-      latLng: `${ this.latitude },${ this.longitude }`,
-      lat: this.latitude,
-      lng: this.longitude,
+      latLng: `${ this.lat },${ this.lng }`,
+      lat: this.lat,
+      lng: this.lng,
       formatted_address: this.location
     };
-    this.service
+
+    this.supplyService
       .register( this.supply )
       .then( msg => {
         this.message = msg;
-        this.supply = new SupplyComponent();
-        this.submitted = false;
-        this.selectedDate = '';
-        this.location = null;
-        this.latitude = -27.1136184;
-        this.longitude = -50.8356141;
-        this.searchControl = new FormControl();
-        this.zoom = 4;
+        this.setDefaults();
       })
       .catch( msg => this.message = msg );
   }
 
+  // Change datepicker date event
   onDateChanged( date ) {
     this.selectedDate = date.formatted;
 
@@ -164,8 +135,54 @@ export class SupplyRegistrationComponent implements OnInit {
     }
   }
 
+  // Prevent submit on enter key
   onEnter( event ) {
     return false;
   }
 
+  // Set Defaults flags and variables in component
+  setDefaults() {
+    // Set google maps defaults
+    this.zoom = 3;
+    this.lat = 0;
+    this.lng = 0;
+
+    // Create search FormControl
+    this.searchControl = new FormControl();
+
+    // Instance new supply
+    this.supply       = new SupplyComponent();
+
+    // Set initial form validation
+    this.submitted    = false;
+    this.selectedDate = '';
+    this.location     = null;
+    this.filledDate   = false;
+  }
+
+  // load Places Autocomplete
+  loadPlacesAutocomplete() {
+    this.mapsAPILoader.load().then( () => {
+      let autocomplete = new google.maps.places.Autocomplete( this.searchElementRef.nativeElement, {
+        types: [ "address" ]
+      });
+      autocomplete.addListener( "place_changed", () => {
+        this.ngZone.run( () => {
+          // Get the place result
+          let place: google.maps.places.PlaceResult = autocomplete.getPlace();
+
+          // Verify result
+          if ( place.geometry === undefined || place.geometry === null ) {
+            return;
+          }
+
+          // Set latitude, longitude and zoom
+          this.location = place.formatted_address;
+          this.lat = place.geometry.location.lat();
+          this.lng = place.geometry.location.lng();
+          this.zoom = 12;
+        });
+      });
+    });
+  }
 }

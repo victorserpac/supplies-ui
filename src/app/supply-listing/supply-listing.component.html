@@ -2,7 +2,7 @@
   <div class="row">
     <p *ngIf="message.length" class="alert alert-info">{{ message }}</p>
 
-    <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
+    <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom" [scrollwheel]="false">
       <sebm-google-map-marker *ngFor="let marker of markers" [latitude]="marker.lat" [longitude]="marker.lng">
        <sebm-google-map-info-window [disableAutoPan]="true">
          {{ marker.info }}
@@ -10,7 +10,9 @@
      </sebm-google-map-marker>
     </sebm-google-map>
 
+    <h2>Listagem de suprimentos</h2>
     <table class="table table-striped table-hover">
+      <caption>Suprimentos mais próximos de você</caption>
       <thead>
         <tr>
           <th>Nome</th>

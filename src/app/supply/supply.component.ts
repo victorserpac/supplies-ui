@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 
 @Component({
-  selector: 'supply',
+  selector:    'supply',
   templateUrl: './supply.component.html',
-  styleUrls: ['./supply.component.css']
+  styleUrls:   [ './supply.component.css' ]
 })
 export class SupplyComponent {
 

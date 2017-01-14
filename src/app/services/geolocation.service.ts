@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 @Injectable()
 export class GeolocationService {
 
+  // Get current position by Geolocation
   getCurrentPosition() {
     return new Promise( ( resolve, reject ) => {
       if ( "geolocation" in navigator ) {
@@ -19,6 +20,7 @@ export class GeolocationService {
     });
   }
 
+  // Get distance between 2 coordinates in KM
   getCoordsDistance( coord1, coord2 ) {
     let R = 6371; // Radius of the earth in km
     let dLat = this.deg2rad( coord2.lat - coord1.lat );  // deg2rad below
@@ -31,6 +33,7 @@ export class GeolocationService {
     return R * c; // Distance in km
   }
 
+  // Convert degrees to radians
   deg2rad( deg ) {
     return deg * ( Math.PI / 180 );
   }

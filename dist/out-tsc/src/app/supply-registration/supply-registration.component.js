@@ -14,102 +14,68 @@ import { SupplyService } from '../supply/supply.service';
 import { GeolocationService } from '../services/geolocation.service';
 import { MapsAPILoader } from 'angular2-google-maps/core';
 var SupplyRegistrationComponent = (function () {
-    function SupplyRegistrationComponent(service, geolocationService, fb, mapsAPILoader, ngZone) {
+    function SupplyRegistrationComponent(supplyService, geolocationService, fb, mapsAPILoader, ngZone) {
         this.mapsAPILoader = mapsAPILoader;
         this.ngZone = ngZone;
-        this.supply = new SupplyComponent();
+        this.message = '';
         this.types = [
             '',
             'Proteína',
             'Carboidrato',
             'Vitamina'
         ];
-        this.today = new Date();
+        this.myDatePickerOptions = {};
+        this.geolocationService = geolocationService;
+        this.supplyService = supplyService;
+        this.registrationForm = fb.group({
+            name: ['', Validators.required],
+            type: ['', Validators.required]
+        });
+        this.setDefaults();
+        var today = new Date();
         this.myDatePickerOptions = {
             showTodayBtn: false,
             sunHighlight: false,
             editableMonthAndYear: false,
             disableUntil: {
-                year: this.today.getFullYear(),
-                month: this.today.getMonth() + 1,
-                day: this.today.getDate() - 1
+                year: today.getFullYear(),
+                month: today.getMonth() + 1,
+                day: today.getDate() - 1
             },
             showClearDateBtn: false,
             selectionTxtFontSize: "14px",
             customPlaceholderTxt: "Digite ou selecione uma data de validade"
         };
-        this.submitted = false;
-        this.filledDate = false;
-        this.message = '';
-        this.selectedDate = '';
-        this.location = null;
-        this.submit = false;
-        this.geolocationService = geolocationService;
-        this.service = service;
-        this.registrationForm = fb.group({
-            name: ['', Validators.required],
-            type: ['', Validators.required]
-        });
     }
     SupplyRegistrationComponent.prototype.ngOnInit = function () {
         var _this = this;
-        this.zoom = 4;
-        this.latitude = -27.1136184;
-        this.longitude = -50.8356141;
-        this.searchControl = new FormControl();
         this.geolocationService
             .getCurrentPosition()
             .then(function (latLng) {
-            _this.latitude = latLng.lat;
-            _this.longitude = latLng.lng;
+            _this.lat = latLng.lat;
+            _this.lng = latLng.lng;
             _this.zoom = 14;
         });
-        this.mapsAPILoader.load().then(function () {
-            var autocomplete = new google.maps.places.Autocomplete(_this.searchElementRef.nativeElement, {
-                types: ["address"]
-            });
-            autocomplete.addListener("place_changed", function () {
-                _this.ngZone.run(function () {
-                    var place = autocomplete.getPlace();
-                    if (place.geometry === undefined || place.geometry === null) {
-                        return;
-                    }
-                    _this.location = place.formatted_address;
-                    _this.latitude = place.geometry.location.lat();
-                    _this.longitude = place.geometry.location.lng();
-                    _this.zoom = 12;
-                });
-            });
-        });
+        this.loadPlacesAutocomplete();
     };
     SupplyRegistrationComponent.prototype.register = function (event) {
         var _this = this;
         this.submitted = true;
         event.preventDefault();
-        if (!this.registrationForm.valid ||
-            !this.filledDate ||
-            !this.searchControl.value ||
-            !this.location) {
+        if (!this.registrationForm.valid || !this.filledDate || !this.searchControl.value || !this.location) {
             return false;
         }
         this.supply.location = {
-            latLng: this.latitude + "," + this.longitude,
-            lat: this.latitude,
-            lng: this.longitude,
+            latLng: this.lat + "," + this.lng,
+            lat: this.lat,
+            lng: this.lng,
             formatted_address: this.location
         };
-        this.service
+        this.supplyService
             .register(this.supply)
             .then(function (msg) {
             _this.message = msg;
-            _this.supply = new SupplyComponent();
-            _this.submitted = false;
-            _this.selectedDate = '';
-            _this.location = null;
-            _this.latitude = -27.1136184;
-            _this.longitude = -50.8356141;
-            _this.searchControl = new FormControl();
-            _this.zoom = 4;
+            _this.setDefaults();
         })
             .catch(function (msg) { return _this.message = msg; });
     };
@@ -125,6 +91,37 @@ var SupplyRegistrationComponent = (function () {
     };
     SupplyRegistrationComponent.prototype.onEnter = function (event) {
         return false;
+    };
+    SupplyRegistrationComponent.prototype.setDefaults = function () {
+        this.zoom = 3;
+        this.lat = 0;
+        this.lng = 0;
+        this.searchControl = new FormControl();
+        this.supply = new SupplyComponent();
+        this.submitted = false;
+        this.selectedDate = '';
+        this.location = null;
+        this.filledDate = false;
+    };
+    SupplyRegistrationComponent.prototype.loadPlacesAutocomplete = function () {
+        var _this = this;
+        this.mapsAPILoader.load().then(function () {
+            var autocomplete = new google.maps.places.Autocomplete(_this.searchElementRef.nativeElement, {
+                types: ["address"]
+            });
+            autocomplete.addListener("place_changed", function () {
+                _this.ngZone.run(function () {
+                    var place = autocomplete.getPlace();
+                    if (place.geometry === undefined || place.geometry === null) {
+                        return;
+                    }
+                    _this.location = place.formatted_address;
+                    _this.lat = place.geometry.location.lat();
+                    _this.lng = place.geometry.location.lng();
+                    _this.zoom = 12;
+                });
+            });
+        });
     };
     return SupplyRegistrationComponent;
 }());
