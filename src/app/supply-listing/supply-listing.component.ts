@@ -1,59 +1,61 @@
 import { Component } from '@angular/core';
 import { SupplyService } from '../supply/supply.service';
+import { GeolocationService } from '../services/geolocation.service';
 
 @Component({
   selector:    'supply-listing',
   templateUrl: './supply-listing.component.html',
-  styleUrls:   ['./supply-listing.component.css']
+  styleUrls:   [ './supply-listing.component.css' ]
 })
 export class SupplyListingComponent {
 
+  supplyService;
+  geolocationService;
+
   supplies = [];
-  service;
   markers;
 
-  lat: number = 0;
-  lng: number = 0;
+  lat  = 0;
+  lng  = 0;
   zoom = 2;
 
-  constructor( service: SupplyService ) {
-    this.service = service;
+  message;
 
-    this.service
-      .list({
-        lat: this.lat,
-        lng: this.lng,
+  constructor(
+    supplyService: SupplyService,
+    geolocationService: GeolocationService
+  ) {
+    this.supplyService      = supplyService;
+    this.geolocationService = geolocationService;
+
+    // First list all supplies
+    this.supplyService
+      .list()
+      .then( supplies => this.supplies = supplies )
+      .catch( msg => this.message = msg );
+
+    // List markers to put in map
+    this.supplyService
+      .getMarkers()
+      .then( markers => this.markers = markers )
+      .catch( msg => this.message = msg );
+
+    // Update map and supplis list with GeoLocation
+    this.geolocationService
+      .getCurrentPosition()
+      .then( latLng => {
+        this.lat  = latLng.lat;
+        this.lng  = latLng.lng;
+        this.zoom = 8;
+
+        return latLng;
       })
-      .then( supplies => this.markers = supplies.map( item => ({
-        lat: +item.location.lat,
-        lng: +item.location.lng,
-        info: item.name
-      })))
-      .catch( msg => console.log( msg ) )
-
-      //set current position by geolocation
-      this.setCurrentPosition()
-        .then( () => {
-          this.service.list({
-            lat: this.lat,
-            lng: this.lng,
-          })
-          .then( supplies => this.supplies = supplies )
-          .catch( msg => console.log( msg ) )
-        });
-  }
-
-  private setCurrentPosition() {
-    return new Promise( ( resolve, reject ) => {
-      if ( "geolocation" in navigator ) {
-        navigator.geolocation.getCurrentPosition( ( position ) => {
-          this.lat = position.coords.latitude;
-          this.lng = position.coords.longitude;
-          this.zoom = 5;
-          resolve();
-        });
-      }
-    });
+      .then( latLng => this.supplyService.sortByClosest({
+          lat: latLng.lat,
+          lng: latLng.lng,
+      }))
+      .then( supplies => this.supplies = supplies )
+      .catch( msg => this.message = msg );
   }
 
 }

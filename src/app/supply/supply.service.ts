@@ -9,12 +9,59 @@ export class SupplyService {
     this.keyWord = 'supply';
   }
 
-  list( latLng ) {
+  list( ) {
     return new Promise( ( resolve, reject ) => {
 
       let supplies = Object.getOwnPropertyNames( localStorage )
         .filter( item => item.split( '-' )[ 0 ] == 'supply' )
-        // .sort( ( a: any, b: any ) =>  a.split( '-' )[ 1 ] - b.split( '-' )[ 1 ] )
+        .sort( ( a: any, b: any ) =>  a.split( '-' )[ 1 ] - b.split( '-' )[ 1 ] )
+        .map( item => {
+          let supply = JSON.parse( localStorage[ item ] );
+          let date = new Date( supply.validate );
+          supply.validate = {
+            jsdate: date,
+            formatted: `${ ( "0" + date.getDate() ).slice( -2 ) }/${ ( "0" + ( date.getMonth() + 1 ) ).slice( -2 ) }/${ date.getFullYear() }`
+          }
+
+          return supply;
+        });
+
+      setTimeout( () => resolve( supplies ), 1000 );
+
+    });
+  }
+
+  getMarkers() {
+    return new Promise( ( resolve, reject ) => {
+
+      let supplies = Object.getOwnPropertyNames( localStorage )
+        .filter( item => item.split( '-' )[ 0 ] == 'supply' )
+        .map( item => {
+          let supply = JSON.parse( localStorage[ item ] );
+          let date = new Date( supply.validate );
+          supply.validate = {
+            jsdate: date,
+            formatted: `${ ( "0" + date.getDate() ).slice( -2 ) }/${ ( "0" + ( date.getMonth() + 1 ) ).slice( -2 ) }/${ date.getFullYear() }`
+          }
+
+          return supply;
+        })
+        .map( item => ({
+          lat: +item.location.lat,
+          lng: +item.location.lng,
+          info: item.name
+        }));
+
+      setTimeout( () => resolve( supplies ), 1000 );
+
+    });
+  }
+
+  sortByClosest( latLng ) {
+    return new Promise( ( resolve, reject ) => {
+
+      let supplies = Object.getOwnPropertyNames( localStorage )
+        .filter( item => item.split( '-' )[ 0 ] == 'supply' )
         .map( item => {
           let supply = JSON.parse( localStorage[ item ] );
           let date = new Date( supply.validate );

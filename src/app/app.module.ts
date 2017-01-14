@@ -5,6 +5,7 @@ import { HttpModule } from '@angular/http';
 import { SupplyModule } from './supply/supply.module';
 import { MyDatePickerModule } from 'mydatepicker';
 import { AgmCoreModule } from "angular2-google-maps/core";
+import { ServicesModule } from './services/services.module';
 
 import { routing } from './app.routes';
 
@@ -25,6 +26,7 @@ import { SupplyListingComponent } from './supply-listing/supply-listing.componen
       apiKey: "AIzaSyCRzRSIDKNJOEEXJhOkSh4tUNcoTk8NChA",
       libraries: ["places"]
     }),
+    ServicesModule
   ],
   declarations: [
     AppComponent,
