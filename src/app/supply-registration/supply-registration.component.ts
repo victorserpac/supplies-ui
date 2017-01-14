@@ -2,6 +2,7 @@ import { Component, NgZone, OnInit, ViewChild, ElementRef } from '@angular/core'
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SupplyComponent } from '../supply/supply.component';
 import { SupplyService } from '../supply/supply.service';
+import { GeolocationService } from '../services/geolocation.service';
 import { MapsAPILoader } from 'angular2-google-maps/core';
 
 @Component({
@@ -11,6 +12,7 @@ import { MapsAPILoader } from 'angular2-google-maps/core';
 })
 export class SupplyRegistrationComponent implements OnInit {
 
+  geolocationService;
   service;
 
   // Supply stuff
@@ -58,10 +60,12 @@ export class SupplyRegistrationComponent implements OnInit {
 
   constructor(
     service: SupplyService,
+    geolocationService: GeolocationService,
     fb: FormBuilder,
     private mapsAPILoader: MapsAPILoader,
     private ngZone: NgZone
   ) {
+    this.geolocationService = geolocationService;
     this.service = service;
 
     this.registrationForm = fb.group({
@@ -80,7 +84,13 @@ export class SupplyRegistrationComponent implements OnInit {
     this.searchControl = new FormControl();
 
     //set current position
-    this.setCurrentPosition();
+    this.geolocationService
+      .getCurrentPosition()
+      .then( latLng => {
+        this.latitude  = latLng.lat;
+        this.longitude = latLng.lng;
+        this.zoom      = 14;
+      });
 
     //load Places Autocomplete
     this.mapsAPILoader.load().then(() => {
@@ -151,16 +161,6 @@ export class SupplyRegistrationComponent implements OnInit {
       this.supply.validate = date.jsdate;
     } else {
       this.filledDate = false;
-    }
-  }
-
-  private setCurrentPosition() {
-    if ("geolocation" in navigator) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        this.latitude = position.coords.latitude;
-        this.longitude = position.coords.longitude;
-        this.zoom = 14;
-      });
     }
   }
 
