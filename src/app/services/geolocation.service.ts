@@ -19,4 +19,20 @@ export class GeolocationService {
     });
   }
 
+  getCoordsDistance( coord1, coord2 ) {
+    let R = 6371; // Radius of the earth in km
+    let dLat = this.deg2rad( coord2.lat - coord1.lat );  // deg2rad below
+    let dLon = this.deg2rad( coord2.lng - coord1.lng );
+    let a =
+      Math.sin( dLat / 2 ) * Math.sin( dLat / 2 ) +
+      Math.cos( this.deg2rad( coord1.lat ) ) * Math.cos( this.deg2rad( coord2.lat ) ) *
+      Math.sin( dLon / 2 ) * Math.sin( dLon / 2 );
+    let c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
+    return R * c; // Distance in km
+  }
+
+  deg2rad( deg ) {
+    return deg * ( Math.PI / 180 );
+  }
+
 }

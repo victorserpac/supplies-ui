@@ -9,17 +9,18 @@ import { GeolocationService } from '../services/geolocation.service';
 })
 export class SupplyListingComponent {
 
-  supplyService;
-  geolocationService;
-
+  message = '';
   supplies = [];
   markers;
 
+  // Services
+  supplyService;
+  geolocationService;
+
+  // Map defaults
   lat  = 0;
   lng  = 0;
   zoom = 2;
-
-  message;
 
   constructor(
     supplyService: SupplyService,

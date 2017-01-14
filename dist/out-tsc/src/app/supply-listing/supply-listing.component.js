@@ -13,6 +13,7 @@ import { GeolocationService } from '../services/geolocation.service';
 var SupplyListingComponent = (function () {
     function SupplyListingComponent(supplyService, geolocationService) {
         var _this = this;
+        this.message = '';
         this.supplies = [];
         this.lat = 0;
         this.lng = 0;

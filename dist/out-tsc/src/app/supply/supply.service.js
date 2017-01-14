@@ -8,68 +8,38 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 import { Injectable } from '@angular/core';
+import { GeolocationService } from '../services/geolocation.service';
 var SupplyService = (function () {
-    function SupplyService() {
+    function SupplyService(geolocationService) {
+        this.geolocationService = geolocationService;
         this.keyWord = 'supply';
     }
     SupplyService.prototype.list = function () {
+        var _this = this;
         return new Promise(function (resolve, reject) {
-            var supplies = Object.getOwnPropertyNames(localStorage)
-                .filter(function (item) { return item.split('-')[0] == 'supply'; })
-                .sort(function (a, b) { return a.split('-')[1] - b.split('-')[1]; })
-                .map(function (item) {
-                var supply = JSON.parse(localStorage[item]);
-                var date = new Date(supply.validate);
-                supply.validate = {
-                    jsdate: date,
-                    formatted: ("0" + date.getDate()).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear()
-                };
-                return supply;
-            });
-            setTimeout(function () { return resolve(supplies); }, 1000);
+            setTimeout(function () { return resolve(_this.getFromLocalStorage()
+                .sort(function (a, b) { return a.time - b.time; })); }, 1000);
         });
     };
     SupplyService.prototype.getMarkers = function () {
+        var _this = this;
         return new Promise(function (resolve, reject) {
-            var supplies = Object.getOwnPropertyNames(localStorage)
-                .filter(function (item) { return item.split('-')[0] == 'supply'; })
-                .map(function (item) {
-                var supply = JSON.parse(localStorage[item]);
-                var date = new Date(supply.validate);
-                supply.validate = {
-                    jsdate: date,
-                    formatted: ("0" + date.getDate()).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear()
-                };
-                return supply;
-            })
+            setTimeout(function () { return resolve(_this.getFromLocalStorage()
                 .map(function (item) { return ({
                 lat: +item.location.lat,
                 lng: +item.location.lng,
                 info: item.name
-            }); });
-            setTimeout(function () { return resolve(supplies); }, 1000);
+            }); })); }, 1000);
         });
     };
-    SupplyService.prototype.sortByClosest = function (latLng) {
+    SupplyService.prototype.sortByClosest = function (currentLocation) {
         var _this = this;
         return new Promise(function (resolve, reject) {
-            var supplies = Object.getOwnPropertyNames(localStorage)
-                .filter(function (item) { return item.split('-')[0] == 'supply'; })
-                .map(function (item) {
-                var supply = JSON.parse(localStorage[item]);
-                var date = new Date(supply.validate);
-                supply.validate = {
-                    jsdate: date,
-                    formatted: ("0" + date.getDate()).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear()
-                };
-                return supply;
-            })
+            setTimeout(function () { return resolve(_this.getFromLocalStorage()
                 .sort(function (a, b) {
-                var distanceA = _this.getDistanceFromLatLonInKm(latLng.lat, latLng.lng, a.location.lat, a.location.lng);
-                var distanceB = _this.getDistanceFromLatLonInKm(latLng.lat, latLng.lng, b.location.lat, b.location.lng);
-                return distanceA - distanceB;
-            });
-            setTimeout(function () { return resolve(supplies); }, 1000);
+                return _this.geolocationService.getCoordsDistance(currentLocation, a.location) -
+                    _this.geolocationService.getCoordsDistance(currentLocation, b.location);
+            })); }, 1000);
         });
     };
     SupplyService.prototype.register = function (supply) {
@@ -82,25 +52,27 @@ var SupplyService = (function () {
             }, 1000);
         });
     };
-    SupplyService.prototype.getDistanceFromLatLonInKm = function (lat1, lon1, lat2, lon2) {
-        var R = 6371;
-        var dLat = this.deg2rad(lat2 - lat1);
-        var dLon = this.deg2rad(lon2 - lon1);
-        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(this.deg2rad(lat1)) * Math.cos(this.deg2rad(lat2)) *
-                Math.sin(dLon / 2) * Math.sin(dLon / 2);
-        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        var d = R * c;
-        return d;
-    };
-    SupplyService.prototype.deg2rad = function (deg) {
-        return deg * (Math.PI / 180);
+    SupplyService.prototype.getFromLocalStorage = function () {
+        var _this = this;
+        return Object.getOwnPropertyNames(localStorage)
+            .filter(function (item) { return item.split('-')[0] == _this.keyWord; })
+            .map(function (item) {
+            var supply = JSON.parse(localStorage[item]);
+            var date = new Date(supply.validate);
+            return Object.assign(supply, {
+                validate: {
+                    jsdate: date,
+                    formatted: ("0" + date.getDate()).slice(-2) + "/" + ("0" + (date.getMonth() + 1)).slice(-2) + "/" + date.getFullYear()
+                },
+                time: item.split('-')[1]
+            });
+        });
     };
     return SupplyService;
 }());
 SupplyService = __decorate([
     Injectable(),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [GeolocationService])
 ], SupplyService);
 export { SupplyService };
 //# sourceMappingURL=../../../../../src/app/supply/supply.service.js.map

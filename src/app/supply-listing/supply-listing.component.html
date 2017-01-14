@@ -1,9 +1,6 @@
 <div class="container">
-
-  <!-- this creates a google map on the page with the given lat/lng from -->
-  <!-- the component as the initial center of the map: -->
-
   <div class="row">
+    <p *ngIf="message.length" class="alert alert-info">{{ message }}</p>
 
     <sebm-google-map [latitude]="lat" [longitude]="lng" [zoom]="zoom">
       <sebm-google-map-marker *ngFor="let marker of markers" [latitude]="marker.lat" [longitude]="marker.lng">
@@ -12,9 +9,7 @@
        </sebm-google-map-info-window>
      </sebm-google-map-marker>
     </sebm-google-map>
-  </div>
 
-  <div class="row">
     <table class="table table-striped table-hover">
       <thead>
         <tr>

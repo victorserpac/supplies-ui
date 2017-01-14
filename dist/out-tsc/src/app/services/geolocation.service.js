@@ -25,6 +25,19 @@ var GeolocationService = (function () {
             }
         });
     };
+    GeolocationService.prototype.getCoordsDistance = function (coord1, coord2) {
+        var R = 6371;
+        var dLat = this.deg2rad(coord2.lat - coord1.lat);
+        var dLon = this.deg2rad(coord2.lng - coord1.lng);
+        var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(this.deg2rad(coord1.lat)) * Math.cos(this.deg2rad(coord2.lat)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        return R * c;
+    };
+    GeolocationService.prototype.deg2rad = function (deg) {
+        return deg * (Math.PI / 180);
+    };
     return GeolocationService;
 }());
 GeolocationService = __decorate([

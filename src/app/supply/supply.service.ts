@@ -1,93 +1,64 @@
 import { Injectable } from '@angular/core';
+import { GeolocationService } from '../services/geolocation.service';
 
 @Injectable()
 export class SupplyService {
 
   keyWord;
 
-  constructor() {
+  // Services
+  geolocationService;
+
+  constructor(
+    geolocationService: GeolocationService
+  ) {
+    this.geolocationService = geolocationService;
     this.keyWord = 'supply';
   }
 
-  list( ) {
+  // List all supplies by registration time
+  list() {
     return new Promise( ( resolve, reject ) => {
 
-      let supplies = Object.getOwnPropertyNames( localStorage )
-        .filter( item => item.split( '-' )[ 0 ] == 'supply' )
-        .sort( ( a: any, b: any ) =>  a.split( '-' )[ 1 ] - b.split( '-' )[ 1 ] )
-        .map( item => {
-          let supply = JSON.parse( localStorage[ item ] );
-          let date = new Date( supply.validate );
-          supply.validate = {
-            jsdate: date,
-            formatted: `${ ( "0" + date.getDate() ).slice( -2 ) }/${ ( "0" + ( date.getMonth() + 1 ) ).slice( -2 ) }/${ date.getFullYear() }`
-          }
-
-          return supply;
-        });
-
-      setTimeout( () => resolve( supplies ), 1000 );
-
+      setTimeout( () => resolve(
+        this.getFromLocalStorage()
+          .sort( ( a: any, b: any ) =>  a.time - b.time )
+      ), 1000 );
     });
   }
 
+  // List all supplies and return an marker object formatted
   getMarkers() {
     return new Promise( ( resolve, reject ) => {
 
-      let supplies = Object.getOwnPropertyNames( localStorage )
-        .filter( item => item.split( '-' )[ 0 ] == 'supply' )
-        .map( item => {
-          let supply = JSON.parse( localStorage[ item ] );
-          let date = new Date( supply.validate );
-          supply.validate = {
-            jsdate: date,
-            formatted: `${ ( "0" + date.getDate() ).slice( -2 ) }/${ ( "0" + ( date.getMonth() + 1 ) ).slice( -2 ) }/${ date.getFullYear() }`
-          }
-
-          return supply;
-        })
-        .map( item => ({
-          lat: +item.location.lat,
-          lng: +item.location.lng,
-          info: item.name
-        }));
-
-      setTimeout( () => resolve( supplies ), 1000 );
-
+      setTimeout( () => resolve(
+        this.getFromLocalStorage()
+          .map( item => ({
+            lat:  +item.location.lat,
+            lng:  +item.location.lng,
+            info: item.name
+          }))
+      ), 1000 );
     });
   }
 
-  sortByClosest( latLng ) {
+  // List all supplies sorting by the closests ones
+  sortByClosest( currentLocation ) {
     return new Promise( ( resolve, reject ) => {
 
-      let supplies = Object.getOwnPropertyNames( localStorage )
-        .filter( item => item.split( '-' )[ 0 ] == 'supply' )
-        .map( item => {
-          let supply = JSON.parse( localStorage[ item ] );
-          let date = new Date( supply.validate );
-          supply.validate = {
-            jsdate: date,
-            formatted: `${ ( "0" + date.getDate() ).slice( -2 ) }/${ ( "0" + ( date.getMonth() + 1 ) ).slice( -2 ) }/${ date.getFullYear() }`
-          }
-
-          return supply;
-        })
-        .sort( ( a: any, b: any ) => {
-          let distanceA = this.getDistanceFromLatLonInKm( latLng.lat, latLng.lng, a.location.lat, a.location.lng );
-          let distanceB = this.getDistanceFromLatLonInKm( latLng.lat, latLng.lng, b.location.lat, b.location.lng );
-
-          return distanceA - distanceB;
-        });
-
-      setTimeout( () => resolve( supplies ), 1000 );
-
+      setTimeout( () => resolve(
+        this.getFromLocalStorage()
+          .sort( ( a: any, b: any ) =>
+            this.geolocationService.getCoordsDistance( currentLocation, a.location ) -
+            this.geolocationService.getCoordsDistance( currentLocation, b.location )
+          )
+      ), 1000 );
     });
   }
 
+  // Register data in Local Storage
   register( supply ) {
-
     return new Promise( ( resolve, reject ) => {
-
       let key = `${ this.keyWord }-${ new Date().getTime() }`;
 
       setTimeout( () => {
@@ -98,22 +69,22 @@ export class SupplyService {
     });
   }
 
-  getDistanceFromLatLonInKm( lat1, lon1, lat2, lon2 ) {
-    var R = 6371; // Radius of the earth in km
-    var dLat = this.deg2rad( lat2 - lat1 );  // deg2rad below
-    var dLon = this.deg2rad( lon2 - lon1 );
-    var a =
-      Math.sin( dLat / 2 ) * Math.sin( dLat / 2 ) +
-      Math.cos( this.deg2rad( lat1 ) ) * Math.cos( this.deg2rad( lat2 ) ) *
-      Math.sin( dLon / 2 ) * Math.sin( dLon / 2 )
-      ;
-    var c = 2 * Math.atan2( Math.sqrt( a ), Math.sqrt( 1 - a ) );
-    var d = R * c; // Distance in km
-    return d;
-  }
+  // Get data from Local Storage
+  getFromLocalStorage() {
+    return Object.getOwnPropertyNames( localStorage )
+      .filter( item => item.split( '-' )[ 0 ] == this.keyWord )
+      .map( item => {
+        let supply = JSON.parse( localStorage[ item ] );
+        let date   = new Date( supply.validate );
 
-  deg2rad( deg ) {
-    return deg * ( Math.PI / 180 )
+        return Object.assign(supply, {
+          validate: {
+            jsdate: date,
+            formatted: `${ ( "0" + date.getDate() ).slice( -2 ) }/${ ( "0" + ( date.getMonth() + 1 ) ).slice( -2 ) }/${ date.getFullYear() }`
+          },
+          time: item.split( '-' )[ 1 ]
+        });
+      });
   }
 
 }
